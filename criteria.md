@@ -51,61 +51,48 @@ whether you hit them:
 
 ---
 
-## 1.
+## 1. Overall accuracy reaches at least 0.68 on the held-out test split
 
-<!-- Your criterion. It must name a number. -->
-
-
+The model achieves an overall classification accuracy of at least 0.68 on the held-out test set.
 
 **Why this target:**
-
-
+In a balanced three-class classification problem, a coin-flip or random guesser achieves approximately 0.33 accuracy, while a zero-shot model without domain fine-tuning typically scores around 0.45 to 0.55 on informal sports discourse. An accuracy of 0.68 requires the model to correctly categorize more than two out of every three posts on unseen data, confirming that fine-tuning captured meaningful distinctions without setting an unrealistically brittle floor across random seeds.
 
 ---
 
-## 2.
+## 2. The analysis label achieves an F1 score of at least 0.70 on the held-out set
 
-<!-- Your criterion. -->
-
-
+The F1 score for `analysis` on the held-out test set is at least 0.70.
 
 **Why this target:**
-
-
+Posts classified as `analysis` have the most distinctive and objective lexical markers in our taxonomy—namely concrete numbers, percentages, dates, dollar amounts, and structured comparative syntax (e.g., "per possession", "effective FG%", "compared to"). Because DistilBERT is particularly effective at picking up these explicit quantitative tokens, `analysis` should achieve our highest per-class performance target.
 
 ---
 
-## 3.
+## 3. The reaction label achieves an F1 score of at least 0.65 on the held-out set
 
-<!-- Your criterion. -->
-
-
+The F1 score for `reaction` on the held-out test set is at least 0.65.
 
 **Why this target:**
-
-
+`reaction` posts feature distinct emotional vocabulary, first-person pronouns ("I", "my"), and punctuation patterns (exclamation marks, all-caps). With roughly 70 total examples of `reaction` in our 210-post corpus, approximately 10 to 11 examples fall into the 15% held-out test split. Because a single misclassification on 10 examples swings the F1 score by roughly 0.05 to 0.08, a target of 0.65 demands strong discrimination while leaving appropriate headroom for small-sample variance across seeds.
 
 ---
 
-## 4.
+## 4. The hot_take label achieves an F1 score of at least 0.60 on the held-out set
 
-<!-- Your criterion. -->
-
-
+The F1 score for `hot_take` on the held-out test set is at least 0.60.
 
 **Why this target:**
-
-
+`hot_take` is our most linguistically varied category and sits directly on the taxonomy's hardest boundary (`analysis` vs. `hot_take`, where posts may contain ornamental stats or sweeping declarative judgements). Because it borders both emotional venting and assertive arguments, it is naturally the most vulnerable to boundary confusion. Setting the target at 0.60 ensures the model learns real discriminatory features for speculative claims without penalizing expected boundary difficulty.
 
 ---
 
-## 5.
+## 5. Confidence calibration demonstrates an accuracy spread of at least 0.15 between the top and bottom confidence tiers
 
-<!-- Your criterion. -->
-
-
+The classification accuracy on the most-confident third of held-out test predictions is at least 0.15 higher than the accuracy on the least-confident third (`accuracy_most_confident_third - accuracy_least_confident_third >= 0.15`).
 
 **Why this target:**
+A reliable classifier should be aware of its own uncertainty. The notebook's `confidence_report` splits test predictions into top and bottom thirds by softmax confidence score. If the model is genuinely calibrated, predictions on which it is confident should be significantly more accurate than predictions where its output distribution is near uniform. A 15 percentage-point gap verifies that the model's confidence scores provide genuine diagnostic value for human reviewers.
 
 
 
