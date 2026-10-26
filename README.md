@@ -206,27 +206,28 @@ Furthermore, running the baseline once with bare label names rather than full de
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.68 | 0.969 | 1.000 | 1.000 | MET |
+| 2. `analysis` F1 | ≥ 0.70 | 0.947 | 1.000 | 1.000 | MET |
+| 3. `reaction` F1 | ≥ 0.65 | 1.000 | 1.000 | 1.000 | MET |
+| 4. `hot_take` F1 | ≥ 0.60 | 0.957 | 1.000 | 1.000 | MET |
+| 5. Confidence calibration spread | ≥ 0.15 | 0.100 | 0.000 | 0.000 | MISSED |
+
+*Hardware Device:* `cuda` (NVIDIA GeForce RTX 2070, PyTorch 2.14.1+cu130).  
+*Stability Note:* Overall accuracy moved 0.031 across seeds (from 0.969 to 1.000). A spread well under 0.05 indicates our dataset split and sample distributions are stable and consistent across random seeds.
 
 ### Confusion matrix
 
 <!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
      An image of a matrix earns nothing. -->
 
-| true \ predicted |  |  |  |
+| true \ predicted | analysis | hot_take | reaction |
 |---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| **analysis** | 9 | 1 | 0 |
+| **hot_take** | 0 | 11 | 0 |
+| **reaction** | 0 | 0 | 11 |
 
 **My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
+My biggest off-diagonal number is 1, where 1 real `analysis` post was predicted as `hot_take` (and 0 in the reverse direction). The misclassified post (*"Their bench was outscored 48-18 tonight, marking the seventh consecutive game where the second unit posted a negative scoring differential"*) featured a strongly frustrated, evaluative tone that caused the model to lean toward classifying it as a venting take, despite the presence of checkable margin and game-streak facts. The model never confused `reaction` with any other class (11/11 correct).
 
 
 
