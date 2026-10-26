@@ -39,48 +39,50 @@
 
 ## What This Does
 
-<!-- Your community, and what your classifier sorts posts into. Three or four
-     sentences. -->
+TakeMeter is a text classifier built to categorize posts from `r/nba`, one of the largest and most active sports discussion communities on the web. Basketball forums host a wide spectrum of discourse quality—ranging from deeply researched statistical breakdowns and salary cap analysis to wild, unsubstantiated hot takes and emotional game-thread venting.
 
-
+TakeMeter automatically parses and classifies public community submissions into three distinct categories: `analysis`, `hot_take`, and `reaction`. By separating load-bearing empirical discussion from provocative opinions and visceral emotional reactions, the system can help filter noise, surface high-effort community contributions, and quantify sentiment dynamics across game days.
 
 ---
 
 ## Label Taxonomy
 
-<!-- Each label: a one-sentence definition and two real examples from your
-     reading. Then your decision rule for the hardest boundary.
+### `analysis`
 
-     The decision rule is worth a point on its own and it's the thing most
-     people leave out. Every taxonomy has a hardest boundary. Name yours. -->
-
-### `label_one`
-
-**Definition:**
+**Definition:** Makes an argument backed by a specific, checkable fact such as a box score statistic, shooting percentage, contract number, historical record, or advanced metric that carries the claim.
 
 **Example 1:**
->
+> "In the 14 games without their starting center, their defensive rating plummeted from 108.4 (3rd in the league) to 119.2 (28th), while opponents shot 68% in the restricted area compared to 54% previously."
 
 **Example 2:**
->
+> "He is owed $48.7M next season with a 15% trade kicker, which means any team trading for him would hard-cap themselves at the second apron and lose their taxpayer mid-level exception."
 
-### `label_two`
+### `hot_take`
 
-**Definition:**
+**Definition:** A confident, controversial, or sweeping claim about a player, team, or narrative with no factual evidence or statistical support offered.
 
 **Example 1:**
->
+> "The 2017 Warriors would sweep any team in NBA history and it wouldn't even be competitive in the fourth quarter."
 
 **Example 2:**
->
+> "He has zero clutch gene and will never be the number one option on a championship team no matter who you put around him."
+
+### `reaction`
+
+**Definition:** An immediate, personal emotional response to a recent play, game result, or breaking news, capturing feelings of shock, joy, misery, or excitement rather than making an argument.
+
+**Example 1:**
+> "I am literally sick to my stomach watching this fourth quarter collapse, I had to turn the TV off."
+
+**Example 2:**
+> "HOLY SHIT WHAT A BUZZER BEATER! I'm screaming in my living room and I think I just woke up my entire apartment complex!"
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `analysis` vs. `hot_take`
 
 **The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+If the post names a specific checkable fact, it is `analysis` only if that fact is load-bearing and carries the argument. If a statistic or number is cited merely as rhetorical decoration or an afterthought within an otherwise sweeping, unsupported claim, the post is classified as `hot_take`.
 
 
 
