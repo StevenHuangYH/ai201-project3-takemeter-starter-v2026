@@ -1,0 +1,38 @@
+{
+  "compared": 30,
+  "agreed": 24,
+  "agreement_rate": 0.8,
+  "disagreements": [
+    {
+      "text": "Carbon plates aren't the whole story. My times dropped 2% in the shoes and another 2% the following year in the same pair, when the only thing that changed was going from 35 to 50 miles a week.",
+      "staff": "hot_take",
+      "mine": "analysis"
+    },
+    {
+      "text": "Three of us ran the same session on the same day, different shoes, within 10 seconds of each other over 5 miles. I'm not saying shoes do nothing, but whatever they do was smaller than the noise between three people.",
+      "staff": "hot_take",
+      "mine": "analysis"
+    },
+    {
+      "text": "Times are down about 3% since the shoe rules changed, so obviously the shoes are the whole story and the sport has a problem.",
+      "staff": "hot_take",
+      "mine": "analysis"
+    },
+    {
+      "text": "First run back after eight weeks out. Two miles, slower than my warm-up used to be, and I don't care even slightly.",
+      "staff": "reaction",
+      "mine": "analysis"
+    },
+    {
+      "text": "Wind was so bad on the out section I was leaning at about 20 degrees. Coming back felt like cheating.",
+      "staff": "reaction",
+      "mine": "hot_take"
+    },
+    {
+      "text": "Just realised the shoes I set every PB in this year are the ones I bought by accident in the wrong size.",
+      "staff": "hot_take",
+      "mine": "reaction"
+    }
+  ],
+  "staff_posts_not_in_mine": 0
+}

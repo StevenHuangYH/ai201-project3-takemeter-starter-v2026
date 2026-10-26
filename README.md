@@ -240,22 +240,19 @@ My biggest off-diagonal number is 1, where 1 real `analysis` post was predicted 
 
 | # | Criterion | Target | Verdict | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Overall accuracy | ≥ 0.68 | MET | Achieved 0.969 on Seed 42, 1.000 on Seed 7, and 1.000 on Seed 2024. All three trials held well above the 0.68 threshold. |
+| 2 | `analysis` F1 | ≥ 0.70 | MET | Achieved 0.947 on Seed 42, 1.000 on Seed 7, and 1.000 on Seed 2024. Maintained high precision and recall on tactical posts across all splits. |
+| 3 | `reaction` F1 | ≥ 0.65 | MET | Scored a perfect 1.000 on Seed 42, 1.000 on Seed 7, and 1.000 on Seed 2024 (11/11, 10/10, 11/11 held-out items classified without error). |
+| 4 | `hot_take` F1 | ≥ 0.60 | MET | Achieved 0.957 on Seed 42, 1.000 on Seed 7, and 1.000 on Seed 2024, easily surpassing the 0.60 target across all trials. |
+| 5 | Confidence calibration spread | ≥ 0.15 | MISSED | Target required the most-confident third to beat the least-confident third by ≥ 0.15. Across seeds, spread was 0.100 on Seed 42 (1.000 vs 0.900), 0.000 on Seed 7 (1.000 vs 1.000), and 0.000 on Seed 2024 (1.000 vs 1.000). The target failed to hold across trials. |
 
 **Diagnoses**
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
-
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+- **Why Criterion 5 Missed (Calibration Compression):**
+  Criterion 5 missed not because the model was inaccurate, but because of a ceiling effect that compressed the calibration spread. On Seeds 7 and 2024, the model achieved 100% test accuracy across all 32 held-out posts. As a consequence, both the most-confident third and the least-confident third scored 1.000, mathematically reducing the spread to 0.000. On Seed 42, where 1 error occurred, the least-confident third still achieved 90.0% accuracy (against 100% in the top third), leaving a spread of 0.100, which fell short of our pre-registered 0.15 goal.
+  
+- **Connection to Agreement Check & Error Analysis:**
+  Our agreement check against staff revealed that 3 of our 6 disagreements occurred on posts citing numbers, where superficial metrics were mistaken for load-bearing arguments. On Seed 42 of the trained model, the single error was a real `analysis` post (*"Their bench was outscored 48-18 tonight..."*) called `hot_take`. The post combined genuine metrics with an emotional complaint about bench depth, showing that while our hand-labeling distinguished facts from feelings, the model's confidence distribution saturates heavily toward 1.0 on short forum texts.
 
 
 
@@ -269,7 +266,7 @@ My biggest off-diagonal number is 1, where 1 real `analysis` post was predicted 
      data/staff_taxonomy.md, not your own — so every argument below is made
      from those definitions and those decision rules. -->
 
-**Agreement rate:** ___ / 30 = ___%
+**Agreement rate:** 24 / 30 = 80.0%
 
 <!-- Nobody grades this number. A 60% who argues every disagreement from the
      stated rules beats a 95% who wrote "staff was right" nine times. Several
@@ -278,40 +275,62 @@ My biggest off-diagonal number is 1, where 1 real `analysis` post was predicted 
 
 **Disagreements**
 
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
-
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
-
 **1.**
-> *The post:*
+> *The post:* "Carbon plates aren't the whole story. My times dropped 2% in the shoes and another 2% the following year in the same pair, when the only thing that changed was going from 35 to 50 miles a week."
 >
-> *Staff said / I said:*
+> *Staff said / I said:* `hot_take` / `analysis`
 >
-> *My call, and why:*
+> *My call, and why:* I believe **my reading is right**. While the opening sentence sounds contrarian, the rest of the post presents a controlled individual experiment with checkable numbers (2% drop in shoes, another 2% with volume increase from 35 to 50 miles/week). The facts do real work to carry the specific argument that weekly mileage explained the second 2% rather than shoe technology. Staff treated it as an unargued personal opinion, but under the written definitions, the fact carries the comparative argument.
 >
-> *Which pile:*
+> *Which pile:* **(c) the rule is ambiguous here and my reading is defensible.**
 
 **2.**
-> *The post:*
+> *The post:* "Three of us ran the same session on the same day, different shoes, within 10 seconds of each other over 5 miles. I'm not saying shoes do nothing, but whatever they do was smaller than the noise between three people."
 >
-> *Staff said / I said:*
+> *Staff said / I said:* `hot_take` / `analysis`
 >
-> *My call, and why:*
+> *My call, and why:* I believe **my reading is right**. Staff labeled this as `hot_take` presumably because comparing three people on one day is an anecdotal sample rather than a rigorous study. However, Rule 1 requires that the argument be backed by a specific, checkable fact where the fact is load-bearing. The post provides specific test parameters (three runners, same session, different shoes, 10s spread over 5 miles) and uses that observation directly to argue that shoe variance was smaller than interpersonal noise. The numbers do load-bearing work.
 >
-> *Which pile:*
+> *Which pile:* **(c) the rule is ambiguous here and my reading is defensible.**
+
+**3.**
+> *The post:* "Times are down about 3% since the shoe rules changed, so obviously the shoes are the whole story and the sport has a problem."
+>
+> *Staff said / I said:* `hot_take` / `analysis`
+>
+> *My call, and why:* **Staff is right.** I saw the checkable statistic ("down about 3%") and immediately flagged it as analysis. However, Rule 1 explicitly states: *"If the number is decoration on a conclusion the writer had already reached, it is a hot_take with a statistic in it."* The conclusion ("obviously the shoes are the whole story and the sport has a problem") is a sweeping, sarcastic generalization, and the 3% stat is merely decorative framing rather than a structured demonstration of causality. I applied the rule loosely because I saw a number.
+>
+> *Which pile:* **(a) the rule covered it and I applied it loosely.**
+
+**4.**
+> *The post:* "First run back after eight weeks out. Two miles, slower than my warm-up used to be, and I don't care even slightly."
+>
+> *Staff said / I said:* `reaction` / `analysis`
+>
+> *My call, and why:* **Staff is right.** The post contains checkable numbers ("eight weeks", "Two miles"), but those numbers do not build an analytical argument. Rule 2 clearly dictates that `reaction` reports what just happened to the writer and how it felt, whereas `analysis` requires an argument. The heart of the post is the emotional relief ("and I don't care even slightly"). I let numerical tokens override the fundamental purpose of the post.
+>
+> *Which pile:* **(a) the rule covered it and I applied it loosely.**
+
+**5.**
+> *The post:* "Wind was so bad on the out section I was leaning at about 20 degrees. Coming back felt like cheating."
+>
+> *Staff said / I said:* `reaction` / `hot_take`
+>
+> *My call, and why:* The disagreement stems from an unaddressed boundary in the taxonomy. The statement *"Coming back felt like cheating"* reads structurally like a humorous hyperbolic claim, while *"leaning at about 20 degrees"* is a subjective descriptive flourish. Staff classified it as `reaction` because it describes the writer's immediate physical experience during a run. The staff rules do not explicitly specify how to handle hyperbolic physical metaphors.
+>
+> *Which pile:* **(b) the rule genuinely doesn't say.**
+
+**6.**
+> *The post:* "Just realised the shoes I set every PB in this year are the ones I bought by accident in the wrong size."
+>
+> *Staff said / I said:* `hot_take` / `reaction`
+>
+> *My call, and why:* I believe **my reading is right**. Staff interpreted this as an implicit hot take asserting that shoe sizing is unimportant for performance. But linguistically, the post begins with *"Just realised"*—it captures an immediate personal revelation and humorous reflection on the writer's own footwear. Under Rule 2, a post reporting what just happened to the writer and how they experienced it is squarely a `reaction`.
+>
+> *Which pile:* **(c) the rule is ambiguous here and my reading is defensible.**
 
 **What the pattern in my disagreements tells me:**
-
-
+Half of my disagreements (Posts 1, 2, and 6) belong to **Pile (c)**, where I defended a principled reading against staff interpretation. However, the two disagreements in **Pile (a)** (Posts 3 and 4) uncover an important vulnerability in my annotation intuition: **I tend to over-index on the mere presence of numbers.** Whenever a post mentions percentages, weeks, or distances, I am tempted to label it `analysis`, even when the number is purely decorative framing for a hot take (`sp_014`) or emotional background for a reaction (`sp_023`). Recognizing this tendency explains why boundary rules like the Load-Bearing Fact Test are vital.
 
 ---
 
