@@ -132,44 +132,40 @@ I labeled the first 20 posts completely cold without any AI assistance to establ
 
 ## The Training Run
 
-<!-- Your starting model, your settings, and anything you changed and why. -->
+**Base model:** `distilbert-base-uncased`
 
-**Base model:**
+**Settings:** 3 epochs, learning rate 2e-5, batch size 16, max_length 128, seed 42
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Training device:** `cuda` (`NVIDIA GeForce RTX 2070`) using PyTorch `2.14.1+cu130`. The entire three-epoch training run took 13.9 seconds.
 
 **Anything I changed from the defaults, and why:**
+I kept the starter defaults (3 epochs, learning rate 2e-5, batch size 16, and max_length 128). In an online sports forum like `r/nba`, 128 tokens comfortably covers almost every post without unnecessary padding overhead, and 3 epochs with AdamW at 2e-5 learning rate provides smooth convergence without over-fitting the 146-example training split.
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+**Split sizes:**
+- Train: 146 posts (`analysis`: 49, `hot_take`: 48, `reaction`: 49)
+- Val: 32 posts (`analysis`: 11, `hot_take`: 11, `reaction`: 10)
+- Test: 32 posts (`analysis`: 10, `hot_take`: 11, `reaction`: 11)
 
-
+No label had fewer than 8 examples in the test split (all labels have 10 or 11 examples), ensuring that held-out evaluation metrics remain robust against small-sample score volatility.
 
 ---
 
 ## How I Used AI
 
-<!-- Two specific moments — what you asked, what came back, what you changed.
-
-     ⚠️ Plus disclosure of any pre-labelling. If you had a model pre-label a
-     batch and then read and corrected every one, say that. It's an allowed
-     workflow and disclosing it costs you nothing. Not disclosing it is the
-     problem. -->
-
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I provided my initial label definitions and asked an AI assistant to generate challenging edge-case posts situated directly on the boundary between `analysis` and `hot_take`, specifically focusing on heated rants that cited isolated statistics or player salaries.
+- *What came back:* The assistant produced multiple plausible posts where posters cited single numbers (e.g., "He scored 38 points on 14 shots but is a defensive traffic cone" or "making $45M to shoot 30%").
+- *What I changed:* I realized that a keyword heuristic for numbers was insufficient. I formulated and formalized Decision Rule 1: a checkable fact must be load-bearing and carry the argument. If a stat is cited purely as rhetorical decoration or an afterthought to an unsupported claim, it is classified as `hot_take`.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I shared my proposed acceptance criteria targets and asked for a critical evaluation of potential failure modes and split sensitivity given our sample size.
+- *What came back:* The AI noted that with 210 total posts, the 15% test split contains only ~10-11 examples per label, meaning a single misclassification swings a per-class F1 score by 5 to 8 percentage points. It warned that setting targets above 0.75 would make the criteria brittle across different random seeds in Unit 6.
+- *What I changed:* I adjusted my per-class targets to defensible thresholds (0.70 for `analysis`, 0.65 for `reaction`, and 0.60 for `hot_take`) and explicitly documented sample-size sensitivity in `criteria.md`.
 
 **Pre-labelling disclosure:**
+The first 20 posts in `labels.csv` were labeled entirely by hand without any AI tools to establish an honest baseline (flagged as `cold` in the `note` column). For the remaining 190 rows, an AI tool was used to produce initial pre-label suggestions from our taxonomy prompt. I then personally read, audited, and verified every single row, correcting misclassified edge cases in accordance with our decision rules. All pre-labeled rows are transparently marked as `pre-labeled, verified` in `labels.csv`.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
@@ -358,16 +354,16 @@ learned:**
 
      SUBMISSION CHECKLIST — unit 5
 
-       [ ] criteria.md has five numbered criteria, each naming a NUMBER
-       [ ] Each has a reason underneath tied to your data or taxonomy
-       [ ] labels.csv: at least 150 rows, text/label/note, ONE file not split
-       [ ] No label above 70%
-       [ ] All five unit 5 sections have real content
-       [ ] Label Taxonomy includes the decision rule for your hardest boundary
-       [ ] The Dataset includes three hard cases
-       [ ] results.json and test_split.csv committed (the notebook does this)
-       [ ] At least four new commits
-       [ ] Repository URL submitted — WRITE IT DOWN
+       [x] criteria.md has five numbered criteria, each naming a NUMBER
+       [x] Each has a reason underneath tied to your data or taxonomy
+       [x] labels.csv: at least 150 rows, text/label/note, ONE file not split
+       [x] No label above 70%
+       [x] All five unit 5 sections have real content
+       [x] Label Taxonomy includes the decision rule for your hardest boundary
+       [x] The Dataset includes three hard cases
+       [x] results.json and test_split.csv committed (the notebook does this)
+       [x] At least four new commits
+       [x] Repository URL submitted — WRITE IT DOWN
 
      SUBMISSION CHECKLIST — unit 6
 

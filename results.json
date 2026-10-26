@@ -1,0 +1,54 @@
+{
+  "seed": 42,
+  "n_test": 32,
+  "accuracy": 0.9375,
+  "f1_macro": 0.9363636363636364,
+  "per_label": {
+    "analysis": {
+      "precision": 0.9,
+      "recall": 0.9,
+      "f1": 0.9,
+      "support": 10
+    },
+    "hot_take": {
+      "precision": 0.9090909090909091,
+      "recall": 0.9090909090909091,
+      "f1": 0.9090909090909091,
+      "support": 11
+    },
+    "reaction": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 11
+    }
+  },
+  "confusion": {
+    "analysis": {
+      "analysis": 9,
+      "hot_take": 1,
+      "reaction": 0
+    },
+    "hot_take": {
+      "analysis": 1,
+      "hot_take": 10,
+      "reaction": 0
+    },
+    "reaction": {
+      "analysis": 0,
+      "hot_take": 0,
+      "reaction": 11
+    }
+  },
+  "confidence": {
+    "mean_when_right": 0.5208958983421326,
+    "mean_when_wrong": 0.4074094295501709,
+    "accuracy_most_confident_third": 1.0,
+    "accuracy_least_confident_third": 0.8,
+    "n_per_third": 10
+  },
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 2070",
+  "torch_version": "2.14.1+cu130",
+  "max_length": 128
+}
