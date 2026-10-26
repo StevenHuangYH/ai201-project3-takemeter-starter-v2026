@@ -90,48 +90,43 @@ If the post names a specific checkable fact, it is `analysis` only if that fact 
 
 ## The Dataset
 
-<!-- Where you collected from, how you labelled, your counts, and three hard
-     cases. -->
-
 **Where the posts came from:**
+Public submissions and discussion threads from `r/nba` (Reddit's primary NBA basketball community), gathered from game threads, post-game analytical discussions, and trade/offseason debate threads.
 
-**How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
-Say so plainly — the disclosure is required, not penalised. -->
+**How I labelled them:**
+I labeled the first 20 posts completely cold without any AI assistance to establish an honest baseline and ground myself in the taxonomy. For the remaining 190 posts, I used an AI tool to pre-label candidate posts against the written definitions, followed by a manual review pass where I read, verified, and corrected every single row, adjudicating ambiguous edge cases using our decision rules. All rows are flagged in the `note` column as either `cold` or `pre-labeled, verified`.
 
 **Counts per label:**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| `analysis` | 70 | 33.3% |
+| `hot_take` | 70 | 33.3% |
+| `reaction` | 70 | 33.3% |
+| **Total** | 210 | 100% |
 
 **Three hard cases**
 
-<!-- Any post that made you pause: what it was, which two labels it could have
-     been, and what you chose. These are worth more than the easy 190. -->
-
 **1.**
-> *The post:*
+> *The post:* "He scored 38 points last night on 14 shots and people are acting like he's an MVP candidate. One hot shooting night doesn't erase being a defensive traffic cone who gives up 40 on the other end."
 >
-> *Could have been:*
+> *Could have been:* `analysis` vs. `hot_take`
 >
-> *I chose, because:*
+> *I chose, because:* I chose `hot_take`. Although the post cites concrete statistics (38 points on 14 shots), the numbers are purely ornamental and serve as rhetorical backdrop to an unsubstantiated sweeping assertion ("defensive traffic cone who gives up 40"). Under our decision rule, the fact does not carry the argument, so it remains a hot take with a statistic in it.
 
 **2.**
-> *The post:*
+> *The post:* "Up 5 with 18 seconds left and you commit a clear-path foul and turn the ball over on the inbounds. I have supported this franchise for 20 years and I have never felt this utterly betrayed."
 >
-> *Could have been:*
+> *Could have been:* `reaction` vs. `analysis`
 >
-> *I chose, because:*
+> *I chose, because:* I chose `reaction`. While the post details the exact game score, remaining time, and procedural turnover sequence, these factual references merely provide context for the author's immediate personal anguish and emotional exhaustion ("never felt this utterly betrayed"). Under our decision rules, reporting immediate feelings outranks descriptive game recaps.
 
 **3.**
-> *The post:*
+> *The post:* "Stop calling this offense elite. Over the last 15 games they rank 24th in halfcourt offensive efficiency (91.2 points per 100) and turn the ball over on 16.8% of possessions against top-10 defenses. The transition numbers are completely masking their inability to run basic sets."
 >
-> *Could have been:*
+> *Could have been:* `hot_take` vs. `analysis`
 >
-> *I chose, because:*
+> *I chose, because:* I chose `analysis`. Despite the aggressive rhetorical tone of the first sentence ("Stop calling this offense elite"), the argument is entirely load-bearing on verifiable empirical data (a 15-game sample, 91.2 halfcourt rating, 16.8% turnover rate). Under our decision rule, heated tone does not disqualify analysis when the facts carry the claim.
 
 ---
 
