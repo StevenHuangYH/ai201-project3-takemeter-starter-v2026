@@ -164,6 +164,12 @@ No label had fewer than 8 examples in the test split (all labels have 10 or 11 e
 - *What came back:* The AI noted that with 210 total posts, the 15% test split contains only ~10-11 examples per label, meaning a single misclassification swings a per-class F1 score by 5 to 8 percentage points. It warned that setting targets above 0.75 would make the criteria brittle across different random seeds in Unit 6.
 - *What I changed:* I adjusted my per-class targets to defensible thresholds (0.70 for `analysis`, 0.65 for `reaction`, and 0.60 for `hot_take`) and explicitly documented sample-size sensitivity in `criteria.md`.
 
+**Moment 3 (Unit 6 Testing & Adjudication)**
+
+- *What I asked for:* I presented the 6 disagreements from the staff agreement check and asked an AI assistant to construct the strongest argument for both labels under `data/staff_taxonomy.md` without declaring a winner.
+- *What came back:* The breakdown highlighted that in `sp_014` and `sp_023`, numbers were purely decorative context rather than driving the claim, whereas in `sp_005` and `sp_010`, the checkable numbers carried the entire comparative point against broader generalizations.
+- *What I changed:* I adopted these insights into my written adjudications, separating true boundary inconsistencies from legitimate defensible interpretations where the written rules were ambiguous.
+
 **Pre-labelling disclosure:**
 The first 20 posts in `labels.csv` were labeled entirely by hand without any AI tools to establish an honest baseline (flagged as `cold` in the `note` column). For the remaining 190 rows, an AI tool was used to produce initial pre-label suggestions from our taxonomy prompt. I then personally read, audited, and verified every single row, correcting misclassified edge cases in accordance with our decision rules. All pre-labeled rows are transparently marked as `pre-labeled, verified` in `labels.csv`.
 
@@ -337,39 +343,34 @@ Half of my disagreements (Posts 1, 2, and 6) belong to **Pile (c)**, where I def
 ## The Improvement
 
 **What I changed:**
+I changed one training setting: I increased the number of training epochs from 3 to 4 (`EPOCHS = 4`, with `RUN_LABEL = "after"`) in the training arguments.
 
 **Which diagnosis pointed at it:**
+Our Seed 42 confusion matrix revealed one analytical post (*"Their bench was outscored 48-18 tonight..."*) misclassified as `hot_take` due to its frustrated, venting tone. We hypothesized that 3 epochs might have left the classification head slightly undertrained on distinguishing emotionally charged analytical posts from genuine hot takes. We tested whether a fourth epoch of optimization would allow the model to fully minimize cross-entropy loss and sharpen its attention weights on the load-bearing box-score facts.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.68 | 0.969 | 1.000 | 0.969 | MET |
+| 2. `analysis` F1 | ≥ 0.70 | 0.947 | 1.000 | 0.952 | MET |
+| 3. `reaction` F1 | ≥ 0.65 | 1.000 | 1.000 | 1.000 | MET |
+| 4. `hot_take` F1 | ≥ 0.60 | 0.957 | 1.000 | 0.952 | MET |
+| 5. Confidence calibration spread | ≥ 0.15 | 0.100 | 0.000 | 0.100 | MISSED |
 
 **Did it help, and how do I know:**
-
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
-
-
+No, it did not help. Comparing the before and after run logs side by side demonstrates that an extra epoch provided no performance gain and slightly increased variance. On Seed 42, overall accuracy and per-label F1 scores were identical (accuracy 0.969, `analysis` F1 0.947). On Seed 2024, accuracy slightly decreased from 1.000 down to 0.969 (`analysis` F1 from 1.000 to 0.952) because the additional 4th pass began slightly overfitting the 147-example training set (training loss dropped from 0.81 to 0.53 while validation loss leveled off). Crucially, the confidence calibration spread remained compressed below 0.15 across all three seeds (0.100 on Seed 42, 0.000 on Seed 7, and 0.100 on Seed 2024). This confirms our Unit 5 insight: DistilBERT converges fully on small corpora by epoch 3, and pushing training duration further risks overfitting rather than improving calibration.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+Criterion 5 (Confidence calibration spread ≥ 0.15) remains missed. Because the model achieves high accuracy (96.9%–100%) on the 32-sample test split, even its least-confident predictions are correct 90% to 100% of the time, causing the empirical spread between top and bottom confidence terciles to collapse to 0.000–0.100. To resolve this in production, I would apply post-hoc temperature scaling or Platt scaling to the output logits, or introduce label smoothing ($\epsilon = 0.1$) during training to penalize overconfident softmax probabilities. I stopped here because modifying the loss function architecture or collecting hundreds of additional borderline test posts goes beyond the single-improvement parameter scope of Unit 6.
 
+**The gap between what I meant my labels to capture and what the model learned:**
+I intended my taxonomy to draw a strict boundary between objective, fact-driven basketball breakdowns and emotional or speculative discourse using the Load-Bearing Fact Rule. The confusion matrix and multi-seed evaluations demonstrate that the model learned the `reaction` boundary flawlessly (1.000 F1 on all seeds), but still occasionally allows intense negative sentiment to overpower factual statistics when an analytical post laments a blowout loss.
 
-
-**The gap between what I meant my labels to capture and what the model
-learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
-
-
+---
 
 <!-- ═════════════════════════════════════════════════════════════════════
 
@@ -388,19 +389,19 @@ learned:**
 
      SUBMISSION CHECKLIST — unit 6
 
-       [ ] Baseline vs. Trained table, with your prediction written beforehand
-       [ ] Run Log — Before, five criteria across three seeds
-       [ ] Confusion matrix TYPED AS A MARKDOWN TABLE
-       [ ] A verdict on every criterion
-       [ ] A diagnosis for every miss, using the agreement report as evidence
-       [ ] Agreement Report with every disagreement adjudicated
-       [ ] One improvement, with Run Log — After
-       [ ] What's Still Broken
-       [ ] results_three_seeds_before.json, results_three_seeds_after.json,
+       [x] Baseline vs. Trained table, with your prediction written beforehand
+       [x] Run Log — Before, five criteria across three seeds
+       [x] Confusion matrix TYPED AS A MARKDOWN TABLE
+       [x] A verdict on every criterion
+       [x] A diagnosis for every miss, using the agreement report as evidence
+       [x] Agreement Report with every disagreement adjudicated
+       [x] One improvement, with Run Log — After
+       [x] What's Still Broken
+       [x] results_three_seeds_before.json, results_three_seeds_after.json,
            baseline_results.json and
            agreement_results.json committed
-       [ ] At least four new commits
-       [ ] The SAME repository URL as last unit
+       [x] At least four new commits
+       [x] The SAME repository URL as last unit
 
      Do not delete and recreate this repository.
      ═════════════════════════════════════════════════════════════════════ -->
